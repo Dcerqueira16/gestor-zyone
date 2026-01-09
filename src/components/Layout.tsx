@@ -14,9 +14,9 @@ export function Layout() {
     const isActive = (path: string) => location.pathname === path;
 
     return (
-        <div className="min-h-screen bg-gray-50 font-sans text-gray-900 flex justify-center">
+        <div className="min-h-screen bg-zyone-black font-sans text-gray-900 flex justify-center">
             {/* Mobile Container Limit */}
-            <div className="w-full max-w-[480px] bg-white min-h-screen shadow-2xl relative flex flex-col">
+            <div className="w-full max-w-[480px] bg-white min-h-screen shadow-2xl relative flex flex-col border-x border-gray-100">
 
                 {/* Header */}
                 <header className="h-16 border-b flex items-center justify-between px-6 bg-white sticky top-0 z-10">

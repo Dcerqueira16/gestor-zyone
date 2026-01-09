@@ -63,8 +63,8 @@ export function AddSale() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold tracking-tight">Nova Venda</h2>
-                <p className="text-gray-500 text-sm">Registre sua venda em segundos.</p>
+                <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">Operacional</p>
+                <h2 className="text-3xl font-extrabold tracking-tight text-zyone-black">Nova Venda</h2>
             </div>
 
             <Card className="p-6 border-0 shadow-md">
@@ -155,9 +155,9 @@ export function AddSale() {
                     </div>
 
                     {/* Profit Preview */}
-                    <div className="bg-green-50 p-4 rounded-lg flex justify-between items-center text-green-900 border border-green-100">
-                        <span className="text-sm font-medium">Lucro Estimado</span>
-                        <span className="text-xl font-bold">R$ {projectedProfit.toFixed(2)}</span>
+                    <div className="bg-zyone-gray p-5 rounded-2xl flex justify-between items-center text-zyone-black border border-gray-100">
+                        <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Lucro Estimado</span>
+                        <span className="text-2xl font-black text-green-600">R$ {projectedProfit.toFixed(2)}</span>
                     </div>
 
                     {/* Submit */}

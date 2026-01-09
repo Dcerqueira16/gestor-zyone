@@ -28,7 +28,10 @@ export function Goals() {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold tracking-tight">Metas</h2>
+            <div>
+                <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">Estratégico</p>
+                <h2 className="text-3xl font-extrabold tracking-tight text-zyone-black">Metas</h2>
+            </div>
 
             <Card className="p-6">
                 <Label htmlFor="goal">Sua meta de lucro mensal (R$)</Label>

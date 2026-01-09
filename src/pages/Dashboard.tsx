@@ -13,8 +13,8 @@ export function Dashboard() {
             {/* Welcome / Date */}
             <div className="flex justify-between items-end">
                 <div>
-                    <p className="text-sm text-gray-500">{new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-                    <h1 className="text-2xl font-bold tracking-tight">Visão Geral</h1>
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">{new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })}</p>
+                    <h1 className="text-3xl font-extrabold tracking-tight text-zyone-black">Dashboard</h1>
                 </div>
             </div>
 
@@ -80,13 +80,13 @@ export function Dashboard() {
 
 function StatsCard({ title, value, icon }: { title: string; value: string | number; icon: React.ReactNode }) {
     return (
-        <Card className="p-4 flex flex-col justify-between h-32 border-0 shadow-sm bg-white">
+        <Card className="p-5 flex flex-col justify-between h-36 border-0 shadow-md bg-white hover:shadow-lg transition-shadow">
             <div className="flex justify-between items-start">
-                <div className="p-2 bg-gray-50 rounded-lg">{icon}</div>
+                <div className="p-3 bg-zyone-gray rounded-xl">{icon}</div>
             </div>
             <div>
-                <span className="text-xs text-gray-500 font-medium">{title}</span>
-                <h3 className="text-xl font-bold">{value}</h3>
+                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{title}</span>
+                <h3 className="text-2xl font-black text-zyone-black">{value}</h3>
             </div>
         </Card>
     );
