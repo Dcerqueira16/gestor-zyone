@@ -87,17 +87,18 @@ export function AddSale() {
 
                     {/* Manual Name Input */}
                     <div>
-                        <Label htmlFor="customName">Nome (Opcional)</Label>
+                        <Label htmlFor="customName">Nome do Produto</Label>
                         <Input
                             id="customName"
                             type="text"
                             value={customName}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomName(e.target.value)}
-                            placeholder="Ex: Gold, Silver, Rose..."
+                            placeholder="Ex: Perfume 10ml - Lys"
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    {/* Main Grid for numeric values */}
+                    <div className="grid grid-cols-3 gap-3">
                         {/* Quantity */}
                         <div>
                             <Label htmlFor="quantity">Qtd</Label>
@@ -106,22 +107,39 @@ export function AddSale() {
                                 type="number"
                                 min="1"
                                 value={quantity}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuantity(Number(e.target.value))}
+                                onChange={(e) => setQuantity(Number(e.target.value))}
+                                className="h-11"
                             />
+                        </div>
+
+                        {/* Cost Price */}
+                        <div>
+                            <Label htmlFor="costPrice">Custo (un)</Label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs">R$</span>
+                                <Input
+                                    id="costPrice"
+                                    type="number"
+                                    step="0.01"
+                                    className="pl-8 h-11 text-sm"
+                                    value={costPrice}
+                                    onChange={(e) => setCostPrice(Number(e.target.value))}
+                                />
+                            </div>
                         </div>
 
                         {/* Sale Price (Unit) */}
                         <div>
-                            <Label htmlFor="price">Valor Venda (un)</Label>
+                            <Label htmlFor="price">Venda (un)</Label>
                             <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs">R$</span>
                                 <Input
                                     id="price"
                                     type="number"
                                     step="0.01"
-                                    className="pl-9"
+                                    className="pl-8 h-11 text-sm"
                                     value={salePrice}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSalePrice(Number(e.target.value))}
+                                    onChange={(e) => setSalePrice(Number(e.target.value))}
                                 />
                             </div>
                         </div>
@@ -134,7 +152,8 @@ export function AddSale() {
                             <Select
                                 id="payment"
                                 value={paymentMethod}
-                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPaymentMethod(e.target.value as PaymentMethod)}
+                                onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                                className="h-11"
                             >
                                 <option value="PIX">Pix</option>
                                 <option value="CASH">Dinheiro</option>
@@ -148,20 +167,21 @@ export function AddSale() {
                             <Input
                                 id="date"
                                 type="date"
+                                className="h-11"
                                 value={date}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)}
+                                onChange={(e) => setDate(e.target.value)}
                             />
                         </div>
                     </div>
 
                     {/* Profit Preview */}
                     <div className="bg-zyone-gray p-5 rounded-2xl flex justify-between items-center text-zyone-black border border-gray-100">
-                        <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Lucro Estimado</span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Lucro Estimado</span>
                         <span className="text-2xl font-black text-green-600">R$ {projectedProfit.toFixed(2)}</span>
                     </div>
 
                     {/* Submit */}
-                    <Button type="submit" className="w-full h-12 text-lg" disabled={isSubmitting}>
+                    <Button type="submit" className="w-full h-14 text-lg font-bold shadow-lg" disabled={isSubmitting}>
                         {isSubmitting ? 'Salvando...' : 'Confirmar Venda'}
                     </Button>
                 </form>
