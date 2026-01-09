@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStore } from '../context/StoreContext';
-import { Card, Button } from '../components/ui';
+import { Card, Button } from '../components/ui/index';
 import { Link } from 'react-router-dom';
 import { TrendingUp, Package } from 'lucide-react';
 

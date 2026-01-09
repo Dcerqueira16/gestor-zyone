@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Button, Input, Label, Card } from '../components/ui/index';
 import { useNavigate, Link } from 'react-router-dom';
+import logo from '../assets/zyone-logo.png';
 
 export function Login() {
     const [email, setEmail] = useState('');
@@ -25,7 +26,7 @@ export function Login() {
             <Card className="w-full max-w-sm p-8 shadow-xl border-0">
                 <div className="text-center mb-8">
                     <div className="h-20 w-20 flex items-center justify-center mx-auto mb-4">
-                        <img src="/src/assets/zyone-logo.png" alt="Zyone" className="h-full w-full object-contain" />
+                        <img src={logo} alt="Zyone" className="h-full w-full object-contain" />
                     </div>
                     <h1 className="text-2xl font-bold tracking-tight">Gestor Zyone</h1>
                     <p className="text-sm text-gray-500 mt-2">Entre para gerenciar suas vendas</p>

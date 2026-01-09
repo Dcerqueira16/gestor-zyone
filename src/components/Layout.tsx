@@ -5,6 +5,8 @@ import { Home, PlusCircle, Target, History, LogOut } from 'lucide-react';
 import { cn } from './ui/index';
 import { Toaster } from 'react-hot-toast';
 
+import logo from '../assets/zyone-logo.png';
+
 export function Layout() {
     const { signOut } = useAuth();
     const location = useLocation();
@@ -20,7 +22,7 @@ export function Layout() {
                 <header className="h-16 border-b flex items-center justify-between px-6 bg-white sticky top-0 z-10">
                     <div className="flex items-center gap-2">
                         <div className="h-10 w-10 flex items-center justify-center">
-                            <img src="/src/assets/zyone-logo.png" alt="Zyone" className="h-full w-full object-contain" />
+                            <img src={logo} alt="Zyone" className="h-full w-full object-contain" />
                         </div>
                         <h1 className="font-bold text-lg tracking-tight">Gestor Zyone</h1>
                     </div>
