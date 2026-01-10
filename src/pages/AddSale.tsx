@@ -4,11 +4,12 @@ import { useStore } from '../context/StoreContext';
 import { ZYONE_PRODUCTS } from '../lib/constants';
 import { Button, Input, Select, Label, Card } from '../components/ui/index';
 import { type PaymentMethod } from '../types';
+import { UserPlus, Phone } from 'lucide-react';
 
 
 export function AddSale() {
     const navigate = useNavigate();
-    const { addSale } = useStore();
+    const { addSale, customers, addCustomer } = useStore();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Form State
@@ -19,6 +20,12 @@ export function AddSale() {
     const [costPrice, setCostPrice] = useState(ZYONE_PRODUCTS[0].defaultCostPrice);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('PIX');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+
+    // Customer State
+    const [customerId, setCustomerId] = useState<number | undefined>(undefined);
+    const [isAddingNewCustomer, setIsAddingNewCustomer] = useState(false);
+    const [newCustomerName, setNewCustomerName] = useState('');
+    const [newCustomerPhone, setNewCustomerPhone] = useState('');
 
     // Update prices/name when template changes
     useEffect(() => {
@@ -37,15 +44,28 @@ export function AddSale() {
 
         try {
             const template = ZYONE_PRODUCTS.find(p => p.id === selectedTemplateId);
+            let finalCustomerId = customerId;
+
+            // Handle new customer fast registration
+            if (isAddingNewCustomer && newCustomerName) {
+                const newId = await addCustomer({
+                    name: newCustomerName,
+                    whatsapp: newCustomerPhone
+                });
+                if (newId) {
+                    finalCustomerId = newId;
+                }
+            }
 
             await addSale({
-                productId: template?.id || 'custom', // Keep tracking origin template if possible
-                productName: customName, // Use the custom name
+                productId: template?.id || 'custom',
+                productName: customName,
                 quantity: Number(quantity),
                 costPrice: Number(costPrice),
                 salePrice: Number(salePrice),
                 paymentMethod,
-                date: new Date(date)
+                date: new Date(date),
+                customerId: finalCustomerId
             });
 
             setQuantity(1);
@@ -83,6 +103,53 @@ export function AddSale() {
                                 <option key={p.id} value={p.id}>{p.name}</option>
                             ))}
                         </Select>
+                    </div>
+
+                    {/* Customer Selection */}
+                    <div className="bg-zyone-gray/50 p-4 rounded-2xl border border-dashed border-gray-200 space-y-3">
+                        <div className="flex justify-between items-center">
+                            <Label className="mb-0 flex items-center gap-1">
+                                <UserPlus size={14} className="text-zyone-gold" /> Cliente
+                            </Label>
+                            <button
+                                type="button"
+                                onClick={() => setIsAddingNewCustomer(!isAddingNewCustomer)}
+                                className="text-[10px] font-bold uppercase text-zyone-gold"
+                            >
+                                {isAddingNewCustomer ? 'Selecionar Existente' : '+ Novo Cliente'}
+                            </button>
+                        </div>
+
+                        {isAddingNewCustomer ? (
+                            <div className="space-y-2 animate-in slide-in-from-top-1 duration-200">
+                                <Input
+                                    placeholder="Nome do cliente"
+                                    value={newCustomerName}
+                                    onChange={e => setNewCustomerName(e.target.value)}
+                                    className="bg-white"
+                                />
+                                <div className="relative">
+                                    <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <Input
+                                        placeholder="WhatsApp (opcional)"
+                                        value={newCustomerPhone}
+                                        onChange={e => setNewCustomerPhone(e.target.value)}
+                                        className="pl-9 bg-white"
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <Select
+                                value={customerId || ''}
+                                onChange={e => setCustomerId(e.target.value ? Number(e.target.value) : undefined)}
+                                className="bg-white"
+                            >
+                                <option value="">Nenhum cliente selecionado</option>
+                                {customers.map(c => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </Select>
+                        )}
                     </div>
 
                     {/* Manual Name Input */}

@@ -45,7 +45,23 @@ alter table goals enable row level security;
 drop policy if exists "Users can CRUD own goals" on goals;
 create policy "Users can CRUD own goals" on goals for all using (auth.uid() = user_id);
 
--- 4. TRIGGER (Safe create)
+-- 4. CUSTOMERS TABLE
+create table if not exists customers (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users not null,
+  name text not null,
+  whatsapp text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table customers enable row level security;
+drop policy if exists "Users can CRUD own customers" on customers;
+create policy "Users can CRUD own customers" on customers for all using (auth.uid() = user_id);
+
+-- 5. UPDATE SALES TABLE (Add customer relationship)
+alter table sales add column if not exists customer_id uuid references customers on delete set null;
+
+-- 6. TRIGGER (Safe create)
 create or replace function public.handle_new_user() 
 returns trigger as $$
 begin

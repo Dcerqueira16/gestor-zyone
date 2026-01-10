@@ -8,6 +8,7 @@ import { Dashboard } from './pages/Dashboard';
 import { AddSale } from './pages/AddSale';
 import { Goals } from './pages/Goals';
 import { History } from './pages/History';
+import Customers from './pages/Customers';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 
@@ -25,6 +26,7 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/add-sale" element={<AddSale />} />
               <Route path="/goals" element={<Goals />} />
+              <Route path="/customers" element={<Customers />} />
               <Route path="/history" element={<History />} />
             </Route>
           </Routes>

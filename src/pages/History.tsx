@@ -2,12 +2,12 @@ import { useStore } from '../context/StoreContext';
 import { Card } from '../components/ui';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Trash2, Eye, X, Edit2, Check } from 'lucide-react';
+import { Trash2, Eye, X, Edit2, Check, User } from 'lucide-react';
 import { useState } from 'react';
 import { Button, Input, Label } from '../components/ui';
 
 export function History() {
-    const { sales, deleteSale, updateSale } = useStore();
+    const { sales, deleteSale, updateSale, customers } = useStore();
     const [viewingSale, setViewingSale] = useState<any>(null);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -64,8 +64,13 @@ export function History() {
                         <Card key={sale.id} className="p-4 flex justify-between items-center shadow-sm border border-gray-100">
                             <div className="flex-1">
                                 <h4 className="font-semibold text-gray-900 line-clamp-1">{sale.productName}</h4>
-                                <p className="text-xs text-gray-500">
-                                    {format(sale.date, "d 'de' MMMM", { locale: ptBR })} • {sale.quantity}x
+                                <p className="text-[10px] text-gray-500 flex items-center gap-2">
+                                    <span>{format(sale.date, "d 'de' MMMM", { locale: ptBR })} • {sale.quantity}x</span>
+                                    {sale.customerId && (
+                                        <span className="flex items-center gap-1 text-zyone-gold font-bold">
+                                            <User size={10} /> {customers.find(c => c.id === sale.customerId)?.name || '...'}
+                                        </span>
+                                    )}
                                 </p>
                             </div>
                             <div className="flex items-center gap-4">
@@ -109,7 +114,16 @@ export function History() {
                                 <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">
                                     {isEditing ? 'Editar Venda' : 'Detalhes da Venda'}
                                 </p>
-                                {!isEditing && <h3 className="text-xl font-bold text-zyone-black line-clamp-2">{viewingSale.productName}</h3>}
+                                {!isEditing && (
+                                    <>
+                                        <h3 className="text-xl font-bold text-zyone-black line-clamp-2">{viewingSale.productName}</h3>
+                                        {viewingSale.customerId && (
+                                            <p className="text-xs text-zyone-gold font-bold flex items-center gap-1 mt-1">
+                                                <User size={12} /> {customers.find(c => c.id === viewingSale.customerId)?.name || 'Cliente'}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
                             </div>
                             <button
                                 onClick={() => setIsEditing(!isEditing)}

@@ -4,16 +4,20 @@ import { supabase } from '../lib/supabase';
 
 // Bypass strict typing for MVP speed - preventing "type never" errors
 const db = supabase as any;
-import { type Sale, type Goal } from '../types';
+import { type Sale, type Goal, type Customer } from '../types';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 
 interface StoreContextType {
     sales: Sale[];
     goals: Goal[];
+    customers: Customer[];
     addSale: (sale: Omit<Sale, 'id' | 'createdAt' | 'totalProfit' | 'userId'>) => Promise<void>;
     updateSale: (id: number, sale: Partial<Omit<Sale, 'id' | 'createdAt' | 'totalProfit' | 'userId'>>) => Promise<void>;
     deleteSale: (id: number) => Promise<void>;
+    addCustomer: (customer: Omit<Customer, 'id' | 'createdAt' | 'userId'>) => Promise<number | undefined>;
+    updateCustomer: (id: number, customer: Partial<Omit<Customer, 'id' | 'createdAt' | 'userId'>>) => Promise<void>;
+    deleteCustomer: (id: number) => Promise<void>;
     updateGoal: (month: string, target: number) => Promise<void>;
     getGoalByMonth: (month: string) => Goal | undefined;
     stats: {
@@ -30,16 +34,6 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 // Define Supabase Row Types
-type SalesRow = {
-    id: number;
-    user_id: string;
-    product_name: string;
-    cost_price: number;
-    sale_price: number;
-    date: string;
-    created_at: string;
-};
-
 type GoalsRow = {
     id: number;
     user_id: string;
@@ -48,10 +42,19 @@ type GoalsRow = {
     created_at: string;
 };
 
+type CustomersRow = {
+    id: number;
+    user_id: string;
+    name: string;
+    whatsapp: string;
+    created_at: string;
+};
+
 export function StoreProvider({ children }: { children: React.ReactNode }) {
     const { user } = useAuth();
     const [sales, setSales] = useState<Sale[]>([]);
     const [goals, setGoals] = useState<Goal[]>([]);
+    const [customers, setCustomers] = useState<Customer[]>([]);
     const [loading, setLoading] = useState(false);
 
     const fetchData = async () => {
@@ -80,8 +83,30 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
             if (goalsError) throw goalsError;
 
+            // Fetch Customers
+            const { data: customersData, error: customersError } = await db
+                .from('customers')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('name', { ascending: true });
+
+            if (customersError) {
+                console.error('Customers table might not exist yet:', customersError);
+                // We don't throw to allow app to work even if CRM table isn't ready
+                setCustomers([]);
+            } else {
+                const mappedCustomers: Customer[] = (customersData as any[]).map((c: CustomersRow) => ({
+                    id: c.id,
+                    userId: c.user_id,
+                    name: c.name,
+                    whatsapp: c.whatsapp,
+                    createdAt: new Date(c.created_at)
+                }));
+                setCustomers(mappedCustomers);
+            }
+
             // Map Data
-            const mappedSales: Sale[] = (salesData as any[]).map((s: SalesRow) => ({
+            const mappedSales: Sale[] = (salesData as any[]).map((s: any) => ({
                 id: s.id,
                 userId: s.user_id,
                 productId: 'manual',
@@ -92,6 +117,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
                 totalProfit: s.sale_price - s.cost_price,
                 date: new Date(s.date),
                 paymentMethod: 'CASH',
+                customerId: s.customer_id,
                 createdAt: new Date(s.created_at)
             }));
 
@@ -132,7 +158,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
                 product_name: `${saleData.quantity}x ${saleData.productName}`,
                 cost_price: totalCost,
                 sale_price: totalSale,
-                date: saleData.date.toISOString()
+                date: saleData.date.toISOString(),
+                customer_id: saleData.customerId
             });
 
             if (error) throw error;
@@ -168,6 +195,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             if (saleData.quantity !== undefined && saleData.productName) {
                 updates.product_name = `${saleData.quantity}x ${saleData.productName}`;
             }
+            if (saleData.customerId !== undefined) {
+                updates.customer_id = saleData.customerId;
+            }
 
             const { error } = await db.from('sales').update(updates).eq('id', id);
 
@@ -194,6 +224,56 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             console.error('Failed to delete sale:', error);
             toast.error('Erro ao excluir venda.');
+        }
+    };
+
+    const addCustomer = async (customerData: Omit<Customer, 'id' | 'createdAt' | 'userId'>): Promise<number | undefined> => {
+        if (!user) return;
+        try {
+            const { data, error } = await db.from('customers').insert({
+                user_id: user.id,
+                name: customerData.name,
+                whatsapp: customerData.whatsapp
+            }).select();
+
+            if (error) throw error;
+            toast.success('Cliente cadastrado!');
+            fetchData();
+            return data?.[0]?.id;
+        } catch (error) {
+            console.error('Failed to add customer:', error);
+            toast.error('Erro ao salvar cliente.');
+            return undefined;
+        }
+    };
+
+    const updateCustomer = async (id: number, customerData: Partial<Omit<Customer, 'id' | 'createdAt' | 'userId'>>) => {
+        if (!user) return;
+        try {
+            const updates: any = {};
+            if (customerData.name) updates.name = customerData.name;
+            if (customerData.whatsapp !== undefined) updates.whatsapp = customerData.whatsapp;
+
+            const { error } = await db.from('customers').update(updates).eq('id', id);
+            if (error) throw error;
+            toast.success('Cliente atualizado!');
+            fetchData();
+        } catch (error) {
+            console.error('Failed to update customer:', error);
+            toast.error('Erro ao atualizar cliente.');
+        }
+    };
+
+    const deleteCustomer = async (id: number) => {
+        if (!user) return;
+        try {
+            const { error } = await db.from('customers').delete().eq('id', id);
+            if (error) throw error;
+            toast.success('Cliente excluído!');
+            fetchData();
+        } catch (error) {
+            console.error('Failed to delete customer:', error);
+            toast.error('Erro ao excluir cliente.');
         }
     };
 
@@ -251,9 +331,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const value = {
         sales,
         goals,
+        customers,
         addSale,
         updateSale,
         deleteSale,
+        addCustomer,
+        updateCustomer,
+        deleteCustomer,
         updateGoal,
         getGoalByMonth,
         stats: {

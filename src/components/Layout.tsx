@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Home, PlusCircle, Target, History, LogOut } from 'lucide-react';
+import { Home, PlusCircle, Target, History, LogOut, Users } from 'lucide-react';
 import { cn } from './ui/index';
 import { Toaster } from 'react-hot-toast';
 
@@ -37,11 +37,12 @@ export function Layout() {
                 </main>
 
                 {/* Bottom Navigation */}
-                <nav className="fixed bottom-0 w-full max-w-[480px] bg-white border-t border-gray-100 h-20 px-6 flex items-center justify-between z-20 pb-2">
-                    <NavLink to="/" icon={<Home size={24} />} label="Início" active={isActive('/')} />
-                    <NavLink to="/add-sale" icon={<PlusCircle size={28} />} label="Vender" active={isActive('/add-sale')} isPrimary />
-                    <NavLink to="/goals" icon={<Target size={24} />} label="Metas" active={isActive('/goals')} />
-                    <NavLink to="/history" icon={<History size={24} />} label="Histórico" active={isActive('/history')} />
+                <nav className="fixed bottom-0 w-full max-w-[480px] bg-white border-t border-gray-100 h-20 px-4 flex items-center justify-between z-20 pb-2">
+                    <NavLink to="/" icon={<Home size={22} />} label="Início" active={isActive('/')} />
+                    <NavLink to="/goals" icon={<Target size={22} />} label="Metas" active={isActive('/goals')} />
+                    <NavLink to="/add-sale" icon={<PlusCircle size={26} />} label="Vender" active={isActive('/add-sale')} isPrimary />
+                    <NavLink to="/customers" icon={<Users size={22} />} label="Clientes" active={isActive('/customers')} />
+                    <NavLink to="/history" icon={<History size={22} />} label="Histórico" active={isActive('/history')} />
                 </nav>
 
                 <Toaster position="top-center" />

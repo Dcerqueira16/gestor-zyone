@@ -20,7 +20,19 @@ export interface Sale {
     totalProfit: number;
     date: Date;
     paymentMethod: PaymentMethod;
+    customerId?: number; // Link to customer
     createdAt: Date;
+}
+
+export interface Customer {
+    id: number;
+    userId: string;
+    name: string;
+    whatsapp?: string;
+    createdAt: Date;
+    // Calculated fields (optional for UI)
+    totalProfit?: number;
+    totalSales?: number;
 }
 
 export interface Goal {
