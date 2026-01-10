@@ -12,6 +12,7 @@ interface StoreContextType {
     sales: Sale[];
     goals: Goal[];
     addSale: (sale: Omit<Sale, 'id' | 'createdAt' | 'totalProfit' | 'userId'>) => Promise<void>;
+    deleteSale: (id: number) => Promise<void>;
     updateGoal: (month: string, target: number) => Promise<void>;
     getGoalByMonth: (month: string) => Goal | undefined;
     stats: {
@@ -144,6 +145,22 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const deleteSale = async (id: number) => {
+        if (!user) return;
+
+        try {
+            const { error } = await db.from('sales').delete().eq('id', id);
+
+            if (error) throw error;
+
+            toast.success('Venda excluída!');
+            fetchData();
+        } catch (error) {
+            console.error('Failed to delete sale:', error);
+            toast.error('Erro ao excluir venda.');
+        }
+    };
+
     const updateGoal = async (month: string, target: number) => {
         if (!user) return;
 
@@ -199,6 +216,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         sales,
         goals,
         addSale,
+        deleteSale,
         updateGoal,
         getGoalByMonth,
         stats: {

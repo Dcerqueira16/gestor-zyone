@@ -93,7 +93,7 @@ export function AddSale() {
                             type="text"
                             value={customName}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomName(e.target.value)}
-                            placeholder="Ex: Perfume 10ml - Lys"
+                            placeholder="digite o nome do produto"
                         />
                     </div>
 
