@@ -46,7 +46,7 @@ export function History() {
             quantity: editQty,
             salePrice: editSalePrice,
             costPrice: editCostPrice,
-            date: new Date(editDate)
+            date: new Date(editDate + 'T12:00:00')
         });
         setIsEditing(false);
         setViewingSale(null);
