@@ -14,7 +14,7 @@ export function AddSale() {
 
     // Form State
     const [selectedTemplateId, setSelectedTemplateId] = useState(ZYONE_PRODUCTS[0].id);
-    const [customName, setCustomName] = useState(ZYONE_PRODUCTS[0].name);
+    const [customName, setCustomName] = useState('');
     const [quantity, setQuantity] = useState(1);
     const [salePrice, setSalePrice] = useState(ZYONE_PRODUCTS[0].defaultSalePrice);
     const [costPrice, setCostPrice] = useState(ZYONE_PRODUCTS[0].defaultCostPrice);
@@ -27,14 +27,12 @@ export function AddSale() {
     const [newCustomerName, setNewCustomerName] = useState('');
     const [newCustomerPhone, setNewCustomerPhone] = useState('');
 
-    // Update prices/name when template changes
+    // Update prices when template changes
     useEffect(() => {
         const product = ZYONE_PRODUCTS.find(p => p.id === selectedTemplateId);
         if (product) {
             setSalePrice(product.defaultSalePrice);
             setCostPrice(product.defaultCostPrice);
-            // We set a default name, but user can change it
-            setCustomName(product.name);
         }
     }, [selectedTemplateId]);
 
