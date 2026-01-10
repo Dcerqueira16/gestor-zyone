@@ -12,6 +12,7 @@ interface StoreContextType {
     sales: Sale[];
     goals: Goal[];
     addSale: (sale: Omit<Sale, 'id' | 'createdAt' | 'totalProfit' | 'userId'>) => Promise<void>;
+    updateSale: (id: number, sale: Partial<Omit<Sale, 'id' | 'createdAt' | 'totalProfit' | 'userId'>>) => Promise<void>;
     deleteSale: (id: number) => Promise<void>;
     updateGoal: (month: string, target: number) => Promise<void>;
     getGoalByMonth: (month: string) => Goal | undefined;
@@ -145,6 +146,41 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const updateSale = async (id: number, saleData: Partial<Omit<Sale, 'id' | 'createdAt' | 'totalProfit' | 'userId'>>) => {
+        if (!user) return;
+
+        try {
+            // If recalculating totals is needed based on partial data
+            // We usually receive the full data from the edit form
+            const updates: any = {};
+            if (saleData.productName) updates.product_name = saleData.productName;
+
+            // Support updating totals if quantity/prices change
+            if (saleData.salePrice !== undefined && saleData.quantity !== undefined) {
+                updates.sale_price = saleData.salePrice * saleData.quantity;
+            }
+            if (saleData.costPrice !== undefined && saleData.quantity !== undefined) {
+                updates.cost_price = saleData.costPrice * saleData.quantity;
+            }
+            if (saleData.date) updates.date = saleData.date.toISOString();
+
+            // Special case for our concatenated product_name in DB
+            if (saleData.quantity !== undefined && saleData.productName) {
+                updates.product_name = `${saleData.quantity}x ${saleData.productName}`;
+            }
+
+            const { error } = await db.from('sales').update(updates).eq('id', id);
+
+            if (error) throw error;
+
+            toast.success('Venda atualizada!');
+            fetchData();
+        } catch (error) {
+            console.error('Failed to update sale:', error);
+            toast.error('Erro ao atualizar venda.');
+        }
+    };
+
     const deleteSale = async (id: number) => {
         if (!user) return;
 
@@ -216,6 +252,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         sales,
         goals,
         addSale,
+        updateSale,
         deleteSale,
         updateGoal,
         getGoalByMonth,
