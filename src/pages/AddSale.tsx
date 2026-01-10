@@ -62,7 +62,7 @@ export function AddSale() {
                 costPrice: Number(costPrice),
                 salePrice: Number(salePrice),
                 paymentMethod,
-                date: new Date(date),
+                date: new Date(date + 'T12:00:00'),
                 customerId: finalCustomerId
             });
 
@@ -158,7 +158,7 @@ export function AddSale() {
                             type="text"
                             value={customName}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomName(e.target.value)}
-                            placeholder="digite o nome do produto"
+                            placeholder="Digite o nome do produto"
                         />
                     </div>
 
