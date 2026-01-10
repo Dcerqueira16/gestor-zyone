@@ -115,7 +115,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
                 costPrice: s.cost_price,
                 salePrice: s.sale_price,
                 totalProfit: s.sale_price - s.cost_price,
-                date: new Date(s.date),
+                date: new Date(s.date + 'T12:00:00'),
                 paymentMethod: 'CASH',
                 customerId: s.customer_id,
                 createdAt: new Date(s.created_at)
